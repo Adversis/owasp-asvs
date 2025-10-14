@@ -1,0 +1,19 @@
+# Claude Code configuration
+.claude/
+
+# macOS
+.DS_Store
+
+# Python scripts (used for data processing)
+*.py
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak

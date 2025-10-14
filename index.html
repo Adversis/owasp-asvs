@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWASP ASVS - Application Security Verification Standard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 2px solid #e3f2fd;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #9fd9d5;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.95em;
+            transition: background 0.2s;
+        }
+
+        .github-link:hover {
+            background: #6fc2c3;
+        }
+
+        .overview {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .overview h2 {
+            color: #161131;
+            margin-bottom: 8px;
+            font-size: 1.4em;
+        }
+
+        .overview h3 {
+            color: #161131;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1.15em;
+        }
+
+        .overview p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .levels-guide {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .level-guide-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .level-guide-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .level-guide-header strong {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .level-guide-item p {
+            margin: 0 0 8px 0;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .level-guide-item p:last-child {
+            margin-bottom: 0;
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #66aec5;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.85em;
+            transition: background 0.2s;
+        }
+
+        .download-link:hover {
+            background: #1565c0dc;
+        }
+
+        .download-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .quick-tips {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .quick-tips ul {
+            margin-top: 12px;
+            padding-left: 18px;
+        }
+
+        .quick-tips li {
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 6px;
+        }
+
+        .quick-tips strong {
+            color: #161131;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 15px;
+            margin-top: 30px;
+            border-top: 2px solid #e3f2fd;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #161131;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .heart {
+            color: #ef5350;
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+        }
+
+        h1 {
+            color: #161131;
+            margin-bottom: 6px;
+            font-size: 1.9em;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .control-group.search-group {
+            flex: 2;
+            min-width: 200px;
+        }
+
+        .control-group.level-group {
+            flex: 0 0 auto;
+            min-width: auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.88em;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #161131;
+        }
+
+        /* Searchable dropdown styles */
+        .searchable-select {
+            position: relative;
+        }
+
+        .searchable-select input {
+            cursor: text;
+            padding-right: 24px;
+        }
+
+        .searchable-select input::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Add a visual indicator for searchable fields */
+        .searchable-select::after {
+            content: '🔍';
+            position: absolute;
+            right: 8px;
+            bottom: 7px;
+            pointer-events: none;
+            opacity: 0.4;
+            font-size: 12px;
+        }
+
+        .level-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .level-filter {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .level-filter input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .level-filter label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+            font-size: 0.88em;
+            white-space: nowrap;
+        }
+
+        .stats {
+            background: #a1dbd774;
+            padding: 4px 5px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 0.88em;
+            color: #161131;
+            border: 1px solid #9fd9d5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats-downloads {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .stats-downloads .download-link {
+            padding: 4px 10px;
+            font-size: 0.8em;
+        }
+
+        .stats-downloads .download-link svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .stats-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats-item strong {
+            color: #161131;
+            font-weight: 600;
+        }
+
+        .stats-separator {
+            color: #9fd9d5;
+            font-weight: bold;
+        }
+
+        .stats-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: #e6f5f599;
+        }
+
+        /* Info Icon in table */
+        .chapter-with-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            color: #161131;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .info-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .info-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e3f2fd;
+        }
+
+        .modal-title {
+            color: #161131;
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .modal-body {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+
+        .modal-body p {
+            margin-bottom: 12px;
+        }
+
+        .modal-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .modal-body a {
+            color: #161131;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .modal-body a:hover {
+            text-decoration: underline;
+        }
+
+        .modal-empty {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #a1dbd774;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 7px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #161131;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 2px solid #d6dbe0;
+            font-size: 0.88em;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background: #bbdefb;
+        }
+
+        th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.3;
+        }
+
+        th.sort-asc::after {
+            content: ' ▲';
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: ' ▼';
+            opacity: 1;
+        }
+
+        td {
+            padding: 7px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.88em;
+        }
+
+        tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.82em;
+            text-align: center;
+            min-width: 28px;
+        }
+
+        .level-1 {
+            background: #ffffeb;
+            color: #f0a05f;
+            border: 1px solid #efdf9a;
+        }
+
+        .level-2 {
+            background: #e0edff;
+            color: #008ae6;
+            border: 1px solid #80aaff;
+        }
+
+        .level-3 {
+            background: #e3fde4;
+            color: #15c020;
+            border: 1px solid #90f99a;
+        }
+
+        .id-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #161131;
+            white-space: nowrap;
+        }
+
+        .description-cell {
+            line-height: 1.45;
+            max-width: 600px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            header > div {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+
+            .github-link {
+                align-self: flex-start;
+            }
+
+            .overview {
+                padding: 15px;
+            }
+
+            .overview h2 {
+                font-size: 1.3em;
+            }
+
+            .overview h3 {
+                font-size: 1.1em;
+            }
+
+            .levels-guide {
+                grid-template-columns: 1fr;
+            }
+
+            .control-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group,
+            .control-group.search-group,
+            .control-group.level-group {
+                min-width: 100%;
+                flex: 1;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .description-cell {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h1>OWASP ASVS</h1>
+                    <p class="subtitle">Application Security Verification Standard - Interactive Reference</p>
+                </div>
+                <a href="https://github.com/adversis/owasp-asvs" target="_blank" rel="noopener" class="github-link">
+                    <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+        </header>
+
+        <div class="overview">
+            <h2>What is ASVS?</h2>
+            <p>The <a target="_blank" href="https://github.com/OWASP/ASVS">OWASP Application Security Verification Standard (ASVS) (v5)</a> is a framework of security requirements and controls that help developers design, build, and test secure applications. It provides a basis for testing application technical security controls and gives developers a list of requirements for secure development.</p>
+            
+            <h3>Understanding the Levels</h3>
+            <div class="levels-guide">
+                <div class="level-guide-item">
+                    <div class="level-guide-header">
+                        <span class="level-badge level-1">1</span>
+                        <strong>Opportunistic</strong>
+                    </div>
+                    <p><strong>Use for:</strong> Marketing sites, public blogs, internal wikis, prototypes, low-risk internal tools, documentation sites</p>
+                    <p><strong>Protects against:</strong> OWASP Top 10 vulnerabilities, basic automated attacks, common configuration errors</p>
+                </div>
+                
+                <div class="level-guide-item">
+                    <div class="level-guide-header">
+                        <span class="level-badge level-2">2</span>
+                        <strong>Standard</strong>
+                    </div>
+                    <p><strong>Use for:</strong> E-commerce platforms, SaaS applications, CRM systems, apps handling PII/PHI, business process automation, enterprise applications</p>
+                    <p><strong>Protects against:</strong> Targeted attacks, insider threats, business logic flaws, advanced persistent threats (APT)</p>
+                </div>
+                
+                <div class="level-guide-item">
+                    <div class="level-guide-header">
+                        <span class="level-badge level-3">3</span>
+                        <strong>Advanced</strong>
+                    </div>
+                    <p><strong>Use for:</strong> Banking systems, payment processors, healthcare platforms (HIPAA), military applications, critical infrastructure (SCADA/ICS), high-value financial trading platforms</p>
+                    <p><strong>Protects against:</strong> Nation-state actors, sophisticated organized crime, zero-day exploits, supply chain attacks</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group search-group">
+                    <label for="search">Search</label>
+                    <input type="text" id="search" placeholder="Search requirements...">
+                </div>
+                <div class="control-group searchable-select">
+                    <label for="chapterFilter">Chapter</label>
+                    <input type="text" id="chapterFilter" list="chapterList" placeholder="All" autocomplete="off">
+                    <datalist id="chapterList"></datalist>
+                </div>
+                <div class="control-group searchable-select">
+                    <label for="sectionFilter">Section</label>
+                    <input type="text" id="sectionFilter" list="sectionList" placeholder="All" autocomplete="off">
+                    <datalist id="sectionList"></datalist>
+                </div>
+                <div class="control-group level-group">
+                    <label>Level</label>
+                    <div class="level-filters">
+                        <div class="level-filter">
+                            <input type="checkbox" id="level1" value="1" checked>
+                            <label for="level1">1</label>
+                        </div>
+                        <div class="level-filter">
+                            <input type="checkbox" id="level2" value="2" checked>
+                            <label for="level2">2</label>
+                        </div>
+                        <div class="level-filter">
+                            <input type="checkbox" id="level3" value="3" checked>
+                            <label for="level3">3</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats" id="stats">
+            Loading data...
+        </div>
+
+        <!-- Modal for Control Objective -->
+        <div id="objectiveModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="modalTitle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4"></path>
+                            <path d="M12 8h.01"></path>
+                        </svg>
+                        Control Objective
+                    </div>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <div class="modal-empty">Select a chapter to view its control objective.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="asvsTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-column="id">ID</th>
+                        <th class="sortable" data-column="chapter">Chapter</th>
+                        <th class="sortable" data-column="section">Section</th>
+                        <th class="sortable" data-column="description">Description</th>
+                        <th class="sortable" data-column="level">Level</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="5" class="no-results">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p>Made with <span class="heart">♥</span> by <a href="https://www.adversis.io/?asvs" target="_blank" rel="noopener">Adversis</a></p>
+            <p style="margin-top: 15px; font-size: 0.85em; color: #666;">
+                Content derived from <a href="https://github.com/OWASP/ASVS" target="_blank" rel="noopener">OWASP Application Security Verification Standard (ASVS) 5.0</a><br>
+                © 2008-2025 The OWASP Foundation. Licensed under
+                <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        let allData = [];
+        let filteredData = [];
+        let currentSort = { column: 'id', direction: 'asc' };
+        let controlObjectives = [];
+
+        // Load control objectives
+        async function loadControlObjectives() {
+            try {
+                const response = await fetch('control_objectives.json');
+                controlObjectives = await response.json();
+            } catch (error) {
+                console.error('Error loading control objectives:', error);
+            }
+        }
+
+        // Show control objective modal for a specific chapter
+        function showControlObjectiveModal(chapterName) {
+            const modal = document.getElementById('objectiveModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            // Find the objective for this chapter
+            const objective = controlObjectives.find(obj => obj.name === chapterName);
+
+            if (objective) {
+                modalTitle.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                    </svg>
+                    ${objective.id}: ${objective.name}
+                `;
+                modalBody.innerHTML = objective.objective;
+            } else {
+                modalTitle.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                    </svg>
+                    Control Objective
+                `;
+                modalBody.innerHTML = '<div class="modal-empty">Control objective not found.</div>';
+            }
+
+            modal.classList.add('show');
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('objectiveModal');
+            modal.classList.remove('show');
+        }
+
+        // Load CSV data
+        async function loadData() {
+            try {
+                const response = await fetch('OWASP_Application_Security_Verification_Standard_5.0.0_en.csv');
+                const text = await response.text();
+                const lines = text.trim().split('\n');
+                
+                // Parse CSV (simple parser for this structure)
+                allData = lines.slice(1).map(line => {
+                    const parts = parseCSVLine(line);
+                    return {
+                        cid: parts[0],
+                        chapter: parts[1],
+                        sid: parts[2],
+                        section: parts[3],
+                        id: parts[4],
+                        description: parts[5],
+                        level: parseInt(parts[6])
+                    };
+                });
+
+                populateFilters();
+                applyFilters();
+            } catch (error) {
+                document.getElementById('tableBody').innerHTML = 
+                    '<tr><td colspan="5" class="no-results">Error loading data. Please ensure the CSV file is in the same directory.</td></tr>';
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Simple CSV parser that handles quoted fields
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                const nextChar = line[i + 1];
+                
+                if (char === '"' && inQuotes && nextChar === '"') {
+                    current += '"';
+                    i++;
+                } else if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else if (char !== '\r') {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            const chapters = [...new Set(allData.map(item => item.chapter))].sort();
+            const sections = [...new Set(allData.map(item => item.section))].sort();
+
+            const chapterList = document.getElementById('chapterList');
+            const sectionList = document.getElementById('sectionList');
+
+            chapters.forEach(chapter => {
+                const option = document.createElement('option');
+                option.value = chapter;
+                chapterList.appendChild(option);
+            });
+
+            sections.forEach(section => {
+                const option = document.createElement('option');
+                option.value = section;
+                sectionList.appendChild(option);
+            });
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const chapterFilter = document.getElementById('chapterFilter').value.trim();
+            const sectionFilter = document.getElementById('sectionFilter').value.trim();
+            const level1 = document.getElementById('level1').checked;
+            const level2 = document.getElementById('level2').checked;
+            const level3 = document.getElementById('level3').checked;
+
+            filteredData = allData.filter(item => {
+                // Search filter
+                if (searchTerm && !item.description.toLowerCase().includes(searchTerm) &&
+                    !item.id.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+
+                // Chapter filter (empty or match)
+                if (chapterFilter && chapterFilter !== '' && item.chapter !== chapterFilter) {
+                    return false;
+                }
+
+                // Section filter (empty or match)
+                if (sectionFilter && sectionFilter !== '' && item.section !== sectionFilter) {
+                    return false;
+                }
+
+                // Level filter
+                if (!level1 && item.level === 1) return false;
+                if (!level2 && item.level === 2) return false;
+                if (!level3 && item.level === 3) return false;
+
+                return true;
+            });
+
+            sortData();
+            renderTable();
+            updateStats();
+        }
+
+        // Sort data
+        function sortData() {
+            filteredData.sort((a, b) => {
+                let aVal = a[currentSort.column];
+                let bVal = b[currentSort.column];
+
+                if (currentSort.column === 'level') {
+                    aVal = parseInt(aVal);
+                    bVal = parseInt(bVal);
+                }
+
+                if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-results">No requirements match your filters.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredData.map(item => `
+                <tr>
+                    <td class="id-cell">${item.id}</td>
+                    <td>
+                        <div class="chapter-with-info">
+                            <span>${item.chapter}</span>
+                            <span class="info-icon" onclick="showControlObjectiveModal('${item.chapter}')" title="View Control Objective">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 16v-4"></path>
+                                    <path d="M12 8h.01"></path>
+                                </svg>
+                            </span>
+                        </div>
+                    </td>
+                    <td>${item.section}</td>
+                    <td class="description-cell">${item.description}</td>
+                    <td><span class="level-badge level-${item.level}">${item.level}</span></td>
+                </tr>
+            `).join('');
+
+            // Update sort indicators
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (th.dataset.column === currentSort.column) {
+                    th.classList.add(`sort-${currentSort.direction}`);
+                }
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = allData.length;
+            const showing = filteredData.length;
+            const level1Count = filteredData.filter(item => item.level === 1).length;
+            const level2Count = filteredData.filter(item => item.level === 2).length;
+            const level3Count = filteredData.filter(item => item.level === 3).length;
+
+            document.getElementById('stats').innerHTML = `
+                <div class="stats-downloads">
+                    <a href="https://github.com/OWASP/ASVS/raw/master/5.0/OWASP_Application_Security_Verification_Standard_5.0.0_en.pdf" target="_blank" rel="noopener" class="download-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        PDF
+                    </a>
+                    <a href="OWASP_Application_Security_Verification_Standard_5.0.0_en.csv" download class="download-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        CSV
+                    </a>
+                </div>
+                <div class="stats-right">
+                    <div class="stats-item">
+                        <strong>Showing:</strong> ${showing} of ${total}
+                    </div>
+                    <span class="stats-separator">•</span>
+                    <div class="stats-item stats-level">
+                        <span class="level-badge level-1">1</span>
+                        <span>${level1Count}</span>
+                    </div>
+                    <div class="stats-item stats-level">
+                        <span class="level-badge level-2">2</span>
+                        <span>${level2Count}</span>
+                    </div>
+                    <div class="stats-item stats-level">
+                        <span class="level-badge level-3">3</span>
+                        <span>${level3Count}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        document.getElementById('search').addEventListener('input', applyFilters);
+
+        // For searchable inputs, listen to both input and change events
+        const chapterInput = document.getElementById('chapterFilter');
+        const sectionInput = document.getElementById('sectionFilter');
+
+        chapterInput.addEventListener('input', applyFilters);
+        chapterInput.addEventListener('change', applyFilters);
+        sectionInput.addEventListener('input', applyFilters);
+        sectionInput.addEventListener('change', applyFilters);
+
+        // Clear button functionality on escape
+        chapterInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                chapterInput.value = '';
+                applyFilters();
+            }
+        });
+        sectionInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                sectionInput.value = '';
+                applyFilters();
+            }
+        });
+
+        document.getElementById('level1').addEventListener('change', applyFilters);
+        document.getElementById('level2').addEventListener('change', applyFilters);
+        document.getElementById('level3').addEventListener('change', applyFilters);
+
+        // Modal event listeners
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+
+        // Close modal when clicking outside
+        document.getElementById('objectiveModal').addEventListener('click', (e) => {
+            if (e.target.id === 'objectiveModal') {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const column = th.dataset.column;
+                if (currentSort.column === column) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = column;
+                    currentSort.direction = 'asc';
+                }
+                sortData();
+                renderTable();
+            });
+        });
+
+        // Load data on page load
+        loadControlObjectives();
+        loadData();
+    </script>
+</body>
+</html>
